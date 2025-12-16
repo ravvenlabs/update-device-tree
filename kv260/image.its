@@ -1,0 +1,47 @@
+/dts-v1/;
+
+/ {
+    description = "U-Boot FIT Image for Zynq UltraScale+ MPSoC";
+    #address-cells = <1>;
+
+    images {
+        kernel-1 {
+            description = "Linux Kernel";
+            data = /incbin/("./zImage");
+            type = "kernel";
+            arch = "arm64";
+            os = "linux";
+            compression = "gzip"; // Or "none"
+            load = <0x00200000>; // Example load address in DDR
+            entry = <0x00200000>; // Example entry point
+        };
+
+        ramdisk-1 {
+            description = "Ramdisk";
+            data = /incbin/("./ramdisk.cpio");
+            type = "ramdisk";
+            arch = "arm64";
+            os = "linux";
+            compression = "none";
+        };
+
+        fdt-1 {
+            description = "Device Tree Blob";
+            data = /incbin/("./system.dtb");
+            type = "flat_dt";
+            arch = "arm64";
+            compression = "none";
+            load = <0x44000000>; // Example load address
+        };
+    };
+
+    configurations {
+        default = "conf-smk-k26-revA-sck-kv-g-revB";
+        conf-smk-k26-revA-sck-kv-g-revB {
+            description = "Boot Linux kernel with ramdisk and DTB";
+            kernel = "kernel-1";
+            ramdisk = "ramdisk-1";
+            fdt = "fdt-1";
+        };
+    };
+};
