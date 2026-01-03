@@ -22,39 +22,19 @@ mkimage -f image.its image.fit
 image.its is not supplied via image.fit originally.  It needs to be created by the user.  
 https://www.gibbard.me/linux_fit_images/
 
-The device tree snippets that must be added are listed below.  Advanced users can change the buffer memory addresses such as 0x31000000 
-as they were chosen arbitrarily.  The 0x43000000 reg memory address must match the AXI lite memory address of the Xilinx VDMA block.  This
-device tree modification will allow for one to run the user space VDMA driver in tripple buffering mode.
+    reserved-memory {
+		#address-cells = <0x02>;
+		#size-cells = <0x02>;
+		ranges;
 
-		vdma1-read-reg {
-			compatible = "generic-uio";
-			reg = <0x43000000 0x1000>;
-		};
-		
-		vdma1-read-buf1 {
-			compatible = "generic-uio";
-			reg = <0x31000000 0x1000000>;
-		};
-		
-		vdma1-read-buf2 {
-			compatible = "generic-uio";
-			reg = <0x32000000 0x1000000>;
-		};
-		
-		vdma1-read-buf3 {
-			compatible = "generic-uio";
-			reg = <0x33000000 0x1000000>;
-		};
-
-		reserved-memory {
-			#address-cells = <0x1>;
-			#size-cells = <0x1>;
-			ranges;
+		reserved@20000000 {
+			reg = <0x00 0x20000000 0x00 0x10000000>;
 			no-map;
-			reserved@31000000 {
-				reg = <0x31000000 0x3000000>;
-			};
 		};
+	};
+    
+Note that this reserves memory location 0x20000000 throuhg 0x30000000.  You need to make sure that this does not interfere with any reserved memory 
+that is reserved via the CMA boot args command.  You can check this after boot by the following command. dmesg | grep cma 
 
 also the boot args must be updated to allow for UIO as shown below.
 
