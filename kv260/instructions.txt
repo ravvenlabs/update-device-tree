@@ -5,7 +5,7 @@ apt-get install device-tree-compiler
 
 dumpimage -T flat_dt -p 0 -o zImage image.fit
 dumpimage -T flat_dt -p 6 -o system.dtb image.fit
-dumpimage -T flat_dt -p 1 -0 ramdisk.cpio image.fit
+dumpimage -T flat_dt -p 1 -o ramdisk.cpio image.fit
 
 dumpimage -l image.fit
 use this information and a sample image.its file to create your custom image.its file
